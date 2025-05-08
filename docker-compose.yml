@@ -1,0 +1,45 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8080:80"
+    volumes:
+      - ./html:/var/www/html
+    depends_on:
+      - db
+    networks:
+      - phoenixnet
+
+  db:
+    image: mysql:5.7
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: phoenix
+      MYSQL_USER: phoenixuser
+      MYSQL_PASSWORD: phoenixpass
+    ports:
+      - "3306:3306"
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - phoenixnet
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    restart: always
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      MYSQL_ROOT_PASSWORD: rootpass
+    networks:
+      - phoenixnet
+
+volumes:
+  dbdata:
+
+networks:
+  phoenixnet:
